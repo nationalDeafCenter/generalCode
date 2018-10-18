@@ -52,7 +52,7 @@ estSEstr <- function(x,w1,wrep,subst,sdat,na.rm=TRUE){
 
     est <- mn(sdat[[x]],sdat[[w1]],subst,na.rm=na.rm)
 
-    reps <- vapply(wrep, function(ww) svmean(sdat[[x]],sdat[[ww]],subst,na.rm=na.rm),1.0)
+    reps <- vapply(wrep, function(ww) mn(sdat[[x]],sdat[[ww]],subst,na.rm=na.rm),1.0)
 
     se <- sqrt(mean((reps-est)^2)*4)
 
