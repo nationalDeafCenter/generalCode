@@ -21,7 +21,7 @@ estSE <- function(x,w1,wrep,na.rm=TRUE){
 
 ## estimates the mean of a variable defined by an expression expr
 ## optionally, on a subset of the population defined by a second expression subst
-estExpr <- function(expr,subst,na.rm=TRUE){
+estExpr <- function(expr,subst,sdat,na.rm=TRUE){
     expr <- enquo(expr)
 
     if(!missing(subst)){
