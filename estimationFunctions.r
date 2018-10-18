@@ -31,5 +31,33 @@ estExpr <- function(expr,subst,sdat,na.rm=TRUE){
 
     x <- transmute(sdat,x=!!expr)$x
 
-    estSE(x,sdat$PWGTP,sdat[,paste0('pwgtp',1:80)],na.rm)
+    estSE(x,sdat$pwgtp,sdat[,paste0('pwgtp',1:80)],na.rm)
+}
+
+estSEstr <- function(x,w1,wrep,subst,sdat,na.rm=TRUE){
+
+    if(!missing(subst)){
+        subst <- enquo(subst)
+        subst <- transmute(sdat,subst= !!subst)$subst
+    } else subst <- NULL
+
+    mn <- function(x,w1,subst,na.rm){
+        if(!is.null(subst)){
+            x <- x[subst]
+            w1 <- w1[subst]
+        }
+        svmean(x,w1,na.rm=na.rm)
+    }
+
+
+    est <- mn(sdat[[x]],sdat[[w1]],subst,na.rm=na.rm)
+
+    reps <- vapply(wrep, function(ww) svmean(sdat[[x]],sdat[[ww]],subst,na.rm=na.rm),1.0)
+
+    se <- sqrt(mean((reps-est)^2)*4)
+
+    n <- if(is.null(subst)){
+             if(na.rm) sum(!is.na(sdat[[x]])) else nrow(sdat)
+         } else if(na.rm) sum(!is.na(sdat[[x]][subst])) else sum(subst)
+    c(est,se,n)
 }
