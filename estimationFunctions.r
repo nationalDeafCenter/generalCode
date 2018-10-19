@@ -34,11 +34,10 @@ estExpr <- function(expr,subst,sdat,na.rm=TRUE){
     estSE(x,sdat$pwgtp,sdat[,paste0('pwgtp',1:80)],na.rm)
 }
 
-estSEstr <- function(x,w1,wrep,subst,sdat,na.rm=TRUE){
+estSEstr <- function(x,w1='pwgtp',wrep=paste0('pwgtp',1:80),subst,sdat,na.rm=TRUE){
 
     if(!missing(subst)){
-        subst <- substitute(subst)
-        if(is.character(subst)) subst <- parse(text=subst)
+        subst <- parse(text=subst)
         subst <- eval(subst,sdat)
     } else subst <- NULL
 
@@ -62,3 +61,13 @@ estSEstr <- function(x,w1,wrep,subst,sdat,na.rm=TRUE){
          } else if(na.rm) sum(!is.na(sdat[[x]][subst])) else sum(subst)
     c(est,se,n)
 }
+
+svby <- function(x,fac,FUN,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),...){
+    levs <- if(is.factor(sdat[[fac]])) levels(sdat[[fac]]) else sort(unique(sdat[[fac]]))
+
+    lapply(levs, function(ll){
+        subst <- paste(fac,'==',ll)
+        FUN(x=x,w1=w1,wrep=wrep,subst=subst,sdat=sdat,...)
+    })
+}
+
