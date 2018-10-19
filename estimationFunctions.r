@@ -37,8 +37,9 @@ estExpr <- function(expr,subst,sdat,na.rm=TRUE){
 estSEstr <- function(x,w1,wrep,subst,sdat,na.rm=TRUE){
 
     if(!missing(subst)){
-        subst <- enquo(subst)
-        subst <- transmute(sdat,subst= !!subst)$subst
+        subst <- substitute(subst)
+        if(is.character(subst)) subst <- parse(text=subst)
+        subst <- eval(subst,sdat)
     } else subst <- NULL
 
     mn <- function(x,w1,subst,na.rm){
