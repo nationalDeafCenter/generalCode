@@ -76,7 +76,7 @@ svby <- function(x,fac,subsets,FUN,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),pro
         if(prop) oo <- c( p =svmean(eval(parse(text=subst),sdat),sdat[[w1]])*100,oo) ## proportion point estimate
         out <- rbind(out,oo)
     }
-    out[,'p'] <- out[,'p']/sum(out[,'p'])*100
+    if(prop) out[,'p'] <- out[,'p']/sum(out[,'p'])*100
     rownames(out) <- if(exists("levs"))  levs else subsets
     out
 }
