@@ -81,3 +81,22 @@ svby <- function(x,fac,subsets,FUN,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),pro
     out
 }
 
+### count number of population in subset
+svTot <- function(sdat,subst,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
+    if(!missing(subst)){
+        subst <- parse(text=subst)
+        subst <- eval(subst,sdat)
+    } else subst <- rep(TRUE,nrow(sdat))
+
+    stopifnot(is.logical(subst))
+
+    if(any(is.na(subst))){
+        warning('Deleting NAs in subset definition' )
+        subst[is.na(subst)] <- FALSE
+    }
+
+    est <- sum(sdat[[w1]][subst])
+    reps <- colSums(sdat[subst,wrep])
+    se <- sqrt(4*mean((est-reps)^2))
+    c(est,se)
+}
