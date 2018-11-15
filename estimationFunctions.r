@@ -31,7 +31,9 @@ estExpr <- function(expr,subst,sdat,na.rm=TRUE){
 
     x <- transmute(sdat,x=!!expr)$x
 
-    estSE(x,sdat$pwgtp,sdat[,paste0('pwgtp',1:80)],na.rm)
+    out <- estSE(x,sdat$pwgtp,sdat[,paste0('pwgtp',1:80)],na.rm)
+    if(is.logical(x)) out[1:2] <- out[1:2]*100
+    out
 }
 
 estSEstr <- function(x,w1='pwgtp',wrep=paste0('pwgtp',1:80),subst,sdat,na.rm=TRUE){
