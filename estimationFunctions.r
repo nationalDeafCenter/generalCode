@@ -102,3 +102,21 @@ svTot <- function(sdat,subst,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
     se <- sqrt(4*mean((est-reps)^2))
     c(est,se)
 }
+
+## estimate proportion of each category of x (character--name of factor in data)
+factorProps <- function(fac,data,w1='pwgtp',wrep=paste0('pwgtp',1:80),...){
+    levs <- if(is.factor(data[[fac]])) levels(data[[fac]]) else sort(unique(data[[fac]]))
+    if(is.character(levs)) levs2 <- paste0("'",levs,"'")
+    subsets <- paste(fac,levs2,sep='==')
+
+    out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=data)
+
+    for(i in 1:length(out)){
+        out[[i]] <- out[[i]][c('est','se')]*100
+        names(out[[i]]) <- c(paste('%',levs[i]),paste0(levs[i],'.se'))
+    }
+
+    out <- do.call('c',out)
+    out <- c(out,n=nrow(data))
+    out
+}
