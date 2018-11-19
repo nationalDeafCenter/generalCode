@@ -16,7 +16,7 @@ estSE <- function(x,w1,wrep,na.rm=TRUE){
 
     n <- if(na.rm) sum(!is.na(x)) else length(x)
 
-    c(est,se,n)
+    c(est=est,se=se,n=n)
 }
 
 ## estimates the mean of a variable defined by an expression expr
