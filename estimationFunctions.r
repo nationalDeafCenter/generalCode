@@ -67,7 +67,7 @@ svby <- function(x,fac,subsets,FUN,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),pro
 
     if(!missing(fac)){
         levs <- if(is.factor(sdat[[fac]])) levels(sdat[[fac]]) else sort(unique(sdat[[fac]]))
-        subsets <- paste(fac,levs)
+        subsets <- paste(fac,levs,sep='==')
     }
 
     out <- NULL
