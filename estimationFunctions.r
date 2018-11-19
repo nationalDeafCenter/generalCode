@@ -62,7 +62,7 @@ estSEstr <- function(x,w1='pwgtp',wrep=paste0('pwgtp',1:80),subst,sdat,na.rm=TRU
     n <- if(is.null(subst)){
              if(na.rm) sum(!is.na(x)) else nrow(sdat)
          } else if(na.rm) sum(!is.na(x[subst])) else sum(subst)
-    c(est,se,n)
+    c(est=est,se=se,n=n)
 }
 
 svby <- function(x,fac,subsets,FUN,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),prop=TRUE,...){
