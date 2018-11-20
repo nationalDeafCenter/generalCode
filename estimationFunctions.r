@@ -111,7 +111,7 @@ factorProps <- function(fac,data,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
     if(missing(cum)) cum <- is.ordered(data[[fac]])|is.numeric(data[[fac]])
 
     subsets <- if(cum) c(paste0(fac,'==',levs2[1]),paste(fac,levs2[-1],sep='>='))
-               else paste(fact,levs2,sep='==')
+               else paste(fac,levs2,sep='==')
 
     out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=data)
 
