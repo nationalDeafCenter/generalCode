@@ -113,7 +113,13 @@ factorProps <- function(fac,data,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
     subsets <- if(cum) c(paste0(fac,'==',levs2[1]),paste(fac,levs2[-1],sep='>='))
                else paste(fac,levs2,sep='==')
 
-    out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=data)
+    if(length(levs)==2){ #maybe save a bit of time
+        s1 <- estSEstr(subsets[1], w1=w1,wrep=wrep,sdat=data)
+        s2 <- setNames(c(1-s1['est'],s1['se'],s1['n']),names(s1))
+        out <- list(s1,s2)
+    } else{
+        out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=data)
+    }
 
     if(cum) levs[-c(1,length(levs))] <- paste0('>=',levs[-c(1,length(levs))])
     for(i in 1:length(out)){
