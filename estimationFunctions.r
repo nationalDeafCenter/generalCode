@@ -104,21 +104,21 @@ svTot <- function(sdat,subst,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
 }
 
 ## estimate proportion of each category of x (character--name of factor in data)
-factorProps <- function(fac,data,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
-    levs <- if(is.factor(data[[fac]])) levels(data[[fac]]) else sort(unique(data[[fac]]))
+factorProps <- function(fac,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
+    levs <- if(is.factor(sdat[[fac]])) levels(sdat[[fac]]) else sort(unique(sdat[[fac]]))
     levs2 <- if(is.character(levs)) paste0("'",levs,"'") else levs
 
-    if(missing(cum)) cum <- is.ordered(data[[fac]])|is.numeric(data[[fac]])
+    if(missing(cum)) cum <- is.ordered(sdat[[fac]])|is.numeric(sdat[[fac]])
 
     subsets <- if(cum) c(paste0(fac,'==',levs2[1]),paste(fac,levs2[-1],sep='>='))
                else paste(fac,levs2,sep='==')
 
     if(length(levs)==2){ #maybe save a bit of time
-        s1 <- estSEstr(subsets[1], w1=w1,wrep=wrep,sdat=data)
+        s1 <- estSEstr(subsets[1], w1=w1,wrep=wrep,sdat=sdat)
         s2 <- setNames(c(1-s1['est'],s1['se'],s1['n']),names(s1))
         out <- list(s1,s2)
     } else{
-        out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=data)
+        out <- lapply(subsets,estSEstr,w1=w1,wrep=wrep,sdat=sdat)
     }
 
     if(cum) levs[-c(1,length(levs))] <- paste0('>=',levs[-c(1,length(levs))])
@@ -128,7 +128,7 @@ factorProps <- function(fac,data,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
     }
 
     out <- do.call('c',out)
-    out <- c(out,n=nrow(data))
+    out <- c(out,n=nrow(sdat))
     out
 }
 
