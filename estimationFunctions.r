@@ -148,5 +148,7 @@ FIX <- function(tib){
     out[sapply(out,is.factor)] <- sapply(out[sapply(out,is.factor)],as.character)
     #names(out)[1:sum(!lst)] <- ''
 
+    out <- as.data.frame(lapply(out,as.vector))
+
     out
 }
