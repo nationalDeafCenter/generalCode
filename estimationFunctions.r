@@ -132,3 +132,21 @@ factorProps <- function(fac,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),cum,...){
     out
 }
 
+
+### wraps around dplyr "do()" string of commands
+### so that it's a readable data.frame output
+### usage e.g. out <- FIX(dat%>%group_by(deaf)%>%do(x=something))
+FIX <- function(tib){
+    lst <- sapply(tib,is.list)
+
+    out <- NULL
+    for(nn in names(tib)[lst]){
+        out <- cbind(out,
+                     do.call('rbind',tib[[nn]]))
+    }
+    out <- cbind(tib[,!lst],out)
+    out[sapply(out,is.factor)] <- sapply(out[sapply(out,is.factor)],as.character)
+    #names(out)[1:sum(!lst)] <- ''
+
+    out
+}
