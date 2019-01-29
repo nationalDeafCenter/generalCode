@@ -23,7 +23,7 @@ med <- function(x,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
     se <- sqrt(4*mean((reps-est)^2))
     ci <- Qf(c(est+2*se,est-2*se))
     SE <- ((ci[1]-ci[2])/4)
-    c(point.est,SE,nrow(sdat))
+    c(median=point.est,SE=SE,n=nrow(sdat))
 }
 
 medStr <- function(x,w1='pwgtp',wrep=paste0('pwgtp',1:80),subst,sdat,...){
