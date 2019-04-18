@@ -6,7 +6,7 @@
 ## finds median of x from ACS sdataset sdat
 ## weights are sdat$pwgtp
 ## replication weights are sdat$pwgtp[1-80]
-med <- function(x,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
+med <- function(x,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80),se=TRUE){
     x <-model.frame(x,sdat)[[1]]
     oo <- order(x)
     w <- sdat[[w1]]
@@ -16,6 +16,7 @@ med <- function(x,sdat,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
                   ties=min)
 
     point.est <-Qf(0.5)
+    if(!se) return(point.est)
     estfun<-as.numeric(x<point.est)
     est <- sum(w*estfun)/sum(w)
     wr <- sdat[,wrep]
