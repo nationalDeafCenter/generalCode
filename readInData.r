@@ -36,6 +36,7 @@ require(tidyverse)
 ### vars character vector of column names to read
 ### char (optional) which columns to read as characters (rest are integers)
 chooseVars <- function(vars,char=NULL){
+  if(!is.element('SERIALNO',vars)) vars <- c(vars,'SERIALNO')
   if(is.null(char)) char <- c('SERIALNO','NAICSP','FOD1P','OCCP','INDP')
   ctypes <- rep('i',length(vars))
   names(ctypes) <- vars
