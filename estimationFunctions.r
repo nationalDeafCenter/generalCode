@@ -1,7 +1,11 @@
 ## weighted mean of vector x, with weight vector w
 svmean <- function(x,w,na.rm=TRUE){
+    if(na.rm){
+        w <- w[!is.na(x)]
+        x <- x[!is.na(x)]
+    }
     w <- w/sum(w)
-    sum(x*w,na.rm=na.rm)
+    sum(x*w)
 }
 
 ## estimates mean of x with SE
