@@ -60,12 +60,12 @@ read1file <- function(path,colTypes,...){
 }
 
 read1type <- function(year,
-                      oneOrFive=c('one','five'),
+                      oneORfive=c('one','five'),
                       HHorP=c('p','h'),
                       PRorUS=c('us','pr'),
                       colTypes,dir,...){
   if(is.null(dir)){
-    dir <- if(oneOrFive=='one') '../../data/byYear/' else paste0('../../data/acs5yr20',year)
+    dir <- if(oneORfive=='one') '../../data/byYear/' else paste0('../../data/acs5yr20',year)
   }
 
   FUN <- if(missing(colTypes)){
@@ -74,12 +74,12 @@ read1type <- function(year,
     } else function(part)
       read1file(paste0(dir,'ss',year,HHorP,PRorUS,part,'.csv'),colTypes=colTypes,...)
 
-  lets <- if(PRorUS=='pr') '' else if(oneOrFive=='one') c('a','b') else c('a','b','c','d')
+  lets <- if(PRorUS=='pr') '' else if(oneORfive=='one') c('a','b') else c('a','b','c','d')
 
   map_dfr(lets,FUN)
 }
 
-### reads 1-year ACS data
+### reads 1-year or 5-year ACS data
 ### year is the year of the data (numeric or character, character prob better e.g. '18')
 ### oneORfive is 'one' for 1-year data or 'five' for 5-year
 ### pVars, hVars (optional) character vectors of column names to read in person and hh data. if Null, that dataset (i.e. person or hh) is not read.
@@ -107,23 +107,33 @@ readACS <- function(year,oneORfive=c('one','five'),
       if(!missing(vars)){
         colTypes <- chooseVars(vars,char)
         dat[[PRorUS]][[HHorP]] <-
-          if(is.null(vars)) NULL else read1type(year,oneORfive,HHorP,'us',colTypes,dir,...)
+          if(is.null(vars)) NULL else read1type(year=year,
+                      oneORfive=oneORfive,
+                      HHorP=HHorP,
+                      PRorUS=PRorUS,
+                      colTypes=colTypes,dir=dir,...)
       } else
-        dat[[PRorUS]][[HHorP]] <- readFiles1year1type(year,dir,oneORfive,'p','us',...)
+        dat[[PRorUS]][[HHorP]] <- read1type(year=year,
+                      oneORfive=oneORfive,
+                      HHorP=HHorP,
+                      PRorUS=PRorUS,
+                      dir=dir,...)
     }
   }
 
   ### merge (actually "left join" sdat and hdat
   ### however, left_join() apparently takes up a ton of RAM and overloads the computer, whereas this works quick and easy
-  ### that said, I'm always nervous about match() cuz it has led to bugs before. Hence the check below
-  dat <- map(dat,
-    function(dd){
-      hdatBind <- dd$h[match(dd$p$SERIALNO,dd$h$SERIALNO),]
-      stopifnot(all.equal(hdatBind$SERIALNO,dd$p$SERIALNO))
-      sdat <- bind_cols(dd$p,hdatBind)
-      sdat
-    }
-  )
+### that said, I'm always nervous about match() cuz it has led to bugs before. Hence the check below
+  dat <- if(!is.null(hVars)&!is.null(pVars)){
+      map(dat,
+          function(dd){
+              hdatBind <- dd$h[match(dd$p$SERIALNO,dd$h$SERIALNO),]
+              stopifnot(all.equal(hdatBind$SERIALNO,dd$p$SERIALNO))
+              sdat <- bind_cols(dd$p,hdatBind)
+              sdat
+          }
+          )
+  } else if(is.null(hVars)&!is.null(pVars)) map(dat,~.$p) else if(is.null(pVars)&!is.null(hVars)) map(dat,~.$p)
 
   if(pr) bind_rows(dat$us,dat$pr) else dat$us
 }
