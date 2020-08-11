@@ -25,7 +25,7 @@ estSE <- function(x,w1,wrep,na.rm=TRUE){
 
 ## estimates the mean of a variable defined by an expression expr
 ## optionally, on a subset of the population defined by a second expression subst
-estExpr <- function(expr,subst,sdat,na.rm=TRUE){
+estExpr <- function(expr,subst,sdat,w1name='pwgtp',wrepname=paste0(w1name,1:80),na.rm=TRUE){
     expr <- enquo(expr)
 
     if(!missing(subst)){
@@ -35,7 +35,7 @@ estExpr <- function(expr,subst,sdat,na.rm=TRUE){
 
     x <- transmute(sdat,x=!!expr)$x
 
-    out <- estSE(x,sdat$pwgtp,sdat[,paste0('pwgtp',1:80)],na.rm)
+    out <- estSE(x,sdat[[w1name]],sdat[,wrepname],na.rm)
     if(is.logical(x)) out[1:2] <- out[1:2]*100
     out
 }
