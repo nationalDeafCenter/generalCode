@@ -104,7 +104,8 @@ svTot <- function(sdat,subst,w1='pwgtp',wrep=paste0('pwgtp',1:80)){
     est <- sum(sdat[[w1]][subst])
     reps <- colSums(sdat[subst,wrep])
     se <- sqrt(4*mean((est-reps)^2))
-    c(est,se)
+    n=sum(subst)
+    c(est=est,se=se,n=n)
 }
 
 ## estimate proportion of each category of x (character--name of factor in data)
